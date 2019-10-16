@@ -802,5 +802,5 @@ WHERE location_id  IN
 ```
 
 >**Ortalama maaşı 10000'den fazla olup,içinde 5000 doların altında maaş alan en az bir çalışanı olan birimleri bulunuz.**
-
+**???**
 # *To Be Continued..*
