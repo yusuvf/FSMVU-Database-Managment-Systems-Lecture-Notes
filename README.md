@@ -52,8 +52,8 @@ ReLaX editöründe sol kısımdaki kutucuğa tıklayarak ilgili data setini seç
 
 ```
  π   maker   (σ model>2000 (Product))
- ```
- 
+```
+
 ---
 
 >**PC ve Laptop'ların hangi fiyatlarda satıldığını bulunuz.**
