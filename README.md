@@ -57,16 +57,16 @@ ReLaX editöründe sol kısımdaki kutucuğa tıklayarak ilgili data setini seç
 ---
 
 >**PC ve Laptop'ların hangi fiyatlarda satıldığını bulunuz.**
- ```
+```
 π price (PC) ∪ π price (Laptop)
-  ```
+```
 
 ---
 
 >**Laptop'lardan farklı PC fiyatlarını  bulunuz.**
-  ```
+```
 π price (PC) - π price (Laptop)
-  ```
+```
 
 ---
 
