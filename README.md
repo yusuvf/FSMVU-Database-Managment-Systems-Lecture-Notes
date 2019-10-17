@@ -605,6 +605,7 @@ SELECT * FROM employees
 WHERE (department_id,salary) IN (SELECT department_id,salary
                               FROM employees
                               WHERE employee_id=148)
+```
 
 ---
 
@@ -618,7 +619,6 @@ WHERE job_id IN (SELECT job_id
                         FROM employees
                         WHERE salary<5000);
 ```
-
 ```SQL
 SELECT count(*) FROM employees
 WHERE (job_id,salary) IN (SELECT job_id,salary
