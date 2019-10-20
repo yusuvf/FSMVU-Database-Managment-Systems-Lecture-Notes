@@ -805,4 +805,97 @@ WHERE location_id  IN
 >**Ortalama maaşı 10000'den fazla olup,içinde 5000 doların altında maaş alan en az bir çalışanı olan birimleri bulunuz.**
 
 **???**
+
+---
+
+>**Kartezyen Çarpım**
+```SQL
+SELECT * FROM departments, employees
+WHERE departments.department_id=100
+```
+
+---
+
+>**Bileşke (Oracle)**
+```SQL
+SELECT * FROM departments, employees
+WHERE departments.department_id=employees.department_id
+```
+```SQL
+SELECT * FROM departments d, employees e
+WHERE d.department_id=e.department_id
+```
+
+---
+
+>**ANSI**
+```SQL
+SELECT * FROM departments d
+JOIN employees e
+ON (d.department_id=e.department_id)
+```
+
+---
+
+>**Bileşke + kısıt**
+```SQL
+SELECT * FROM departments d, employees e
+WHERE d.department_id=e.department_id
+AND salary>10000
+```
+
+---
+
+>**ANSI**
+```SQL
+SELECT * FROM (SELECT * FROM departments d
+JOIN employees e
+ON (d.department_id=e.department_id))
+WHERE salary>10000
+```
+
+---
+
+>**INNER JOIN**
+```SQL
+SELECT * FROM departments d
+INNER JOIN employees e
+USING (department_id)
+WHERE department_id=50
+```
+
+---
+
+>**NATURAL JOIN**
+```SQL
+SELECT * FROM departments d
+NATURAL JOIN employees e
+WHERE department_id=50
+```
+
+**Non equi Join**
+>**Kendi unvan maaş aralığından fazla maaş alan kişileri bununuz.**
+```SQL
+SELECT * FROM employees e
+JOIN jobs j
+ON (e.job_id=j.job_id AND salary NOT BETWEEN min_salary AND max_salary)
+```
+
+---
+
+>**Kendi biriminin ortalamasından fazla maaş alan kişileri bulunuz.**
+```SQL
+(SELECT department_id, AVG(salary) maas
+ FROM employees
+ GROUP BY department_id) dept_avg
+ ```
+```SQL
+SELECT * FROM employees e
+INNER  JOIN (SELECT department_id, AVG(salary) maas
+ FROM employees
+ GROUP BY department_id) dept_avg
+USING (department_id)
+WHERE e.salary>dept_avg.maas
+```
+
 # *To Be Continued..*
