@@ -898,4 +898,304 @@ USING (department_id)
 WHERE e.salary>dept_avg.maas
 ```
 
+## Quiz Çözümleri
+
+>**Hem kalem hem silgi alanları bulunuz**
+
+```
+FATURA_BILGI=(FATURA  ⨝ FATURA_DETAY)
+
+(σ urun_id='Kalem' FATURA_BILGI) ∩ (σ urun_id='Silgi' FATURA_BILGI)
+```
+
+>**Aldığı toplam kalem sayısı 500'den fazla olan müşteri isimleri**
+```
+FATURA_BILGI=(FATURA  ⨝ FATURA_DETAY)
+
+MUSTERI_KALEM = γ musteri_id; SUM(Adet)-> toplam_adet (σ urun_id='Kalem'(FATURA_BILGI))
+
+π adi, soyadi (MUSTERI ⨝ musteri.musteri_id= musteri_kalem.musteri_id(σ toplam_adet>500 (MUSTERI_KALEM)))
+```
+
+>**2013 yılında kalem alamayan müşterileri SQL ile bulunuz.**
+```SQL
+SELECT DISTINCT adres_id FROM musteri
+WHERE musteri_id NOT IN  
+			(SELECT musteri_id FROM fatura
+			WHERE fatura_no IN
+				 (SELECT fatura_no
+					FROM fatura_detay
+					WHERE urun_id='Kalem')
+			AND fatura_tarihi=2013)
+```
+
+## Örneklerin Devamı
+
+>**Amerikada çalışan kişileri bulunuz.**
+```SQL
+SELECT * 
+FROM employees
+INNER JOIN departments USING (department_id)
+INNER JOIN locations USING (location_id)
+INNER JOIN countries USING (country_id)
+INNER JOIN regions USING (region_id)
+WHERE region_name='Americas'
+```
+
+```SQL
+SELECT * 
+FROM employees e
+JOIN departments d ON (d.department_id=e.department_id)
+JOIN locations l ON (l.location_id=d.location_id)
+JOIN countries c ON (c.country_id=l.country_id)
+JOIN regions r ON (r.region_id=c.region_id)
+WHERE r.region_name='Americas'
+```
+
+
+>**Çalışanlarının hiç birisi ünvan değiştirmeyen birimleri bulunuz**
+```SQL
+SELECT * FROM departments
+WHERE department_id NOT IN 
+    (SELECT NVL(department_id,0) FROM employees
+     WHERE job_id IN (SELECT job_id 
+                     FROM job_history))
+```
+
+>**Amirinden çok maaş alan kişileri bulunuz.**
+```SQL
+SELECT *
+FROM employees calisan
+JOIN employees amir
+  ON calisan.manager_id=amir.employee_id
+   AND calisan.salary>=amir.salary
+```
+
+```SQL
+SELECT *
+FROM employees calisan,employees amir
+WHERE calisan.manager_id=amir.employee_id
+   AND calisan.salary>amir.salary
+```
+
+>**Aynı unvanı taşıyan aynı birimde çalışan, ancak maaşı birbirinde farklı olan kişileri bulunuz.**
+```SQL
+SELECT *
+FROM employees kaynak
+JOIN employees hedef
+  ON (kaynak.department_id=hedef.department_id 
+  AND kaynak.job_id=hedef.job_id
+  AND kaynak.salary<>hedef.salary
+  AND kaynak.employee_id<>hedef.employee_id)
+``` 
+   
+
+
+>**Çalışan sayısı aynı ancak toplam ödenen maaşları farklı olan birimleri bulunuz.**
+```SQL
+SELECT * FROM 
+    (SELECT NVL(department_id,-1) department_id, COUNT(*) calisan_sayi, SUM (salary) toplam_maas
+    FROM employees
+    GROUP BY department_id) kaynak,
+    (SELECT NVL(department_id,-1) department_id, COUNT(*) calisan_sayi, SUM (salary) toplam_maas
+    FROM employees
+    GROUP BY department_id) hedef
+WHERE kaynak.department_id>hedef.department_id
+  AND kaynak.calisan_sayi=hedef.calisan_sayi
+  AND kaynak.toplam_maas<>hedef.toplam_maas
+ORDER BY kaynak.department_id
+```
+>**Alternatif çözüm**
+```SQL
+CREATE OR REPLACE VIEW DEPT_COUNT AS (SELECT NVL(department_id,-1) department_id, COUNT(*) calisan_sayi, SUM (salary) toplam_maas
+                        FROM employees
+                        GROUP BY department_id)
+```
+```SQL
+SELECT * FROM  DEPT_COUNT kaynak, DEPT_COUNT hedef
+WHERE kaynak.department_id>hedef.department_id
+  AND kaynak.calisan_sayi=hedef.calisan_sayi
+  AND kaynak.toplam_maas<>hedef.toplam_maas
+ORDER BY kaynak.department_id
+```
+
+>**Hangi birimlerde ST_MAN'lere ödenen toplam maaş ST_CLERK'lere ödenen toplamdan azdır.**
+```SQL
+SELECT * 
+FROM  (SELECT department_id, SUM(salary) toplam_maas
+       FROM employees
+       WHERE job_id = 'ST_MAN'
+       GROUP BY department_id) dept_st_man
+JOIN (SELECT department_id, SUM(salary) toplam_maas
+      FROM employees
+      WHERE job_id = 'ST_CLERK'
+      GROUP BY department_id) dept_st_clerk
+ON (dept_st_man.department_id=dept_st_clerk.department_id
+   AND dept_st_man.toplam_maas<dept_st_clerk.toplam_maas)
+```
+
+>**Aynı unvanı taşıyan, ancak maaşı birbirinde farklı olan kişilerin sayısını unvanlara göre gruplayarak  bulunuz.**
+
+>??
+
+>**OUTER JOIN**
+```SQL
+SELECT * FROM employees e,departments d
+WHERE e.department_id=d.department_id(+)
+```
+```SQL
+SELECT e.department_id,department_name,COUNT(*) 
+FROM employees e,departments d
+WHERE e.department_id=d.department_id
+GROUP BY e.department_id,department_name
+```
+
+>**Birim bilgisi olmayan veya eşleşmeyen kişi sayısını bulunuz.**
+```SQL
+SELECT COUNT(*) FROM employees e,departments d
+WHERE e.department_id=d.department_id(+)
+AND d.department_id IS NULL
+```
+
+>**Birimdeki kişi sayıları (kişi çalışmayan birimler dahil) getiriniz.**
+```SQL
+SELECT d.department_id,department_name,COUNT(e.department_id) 
+FROM employees e,departments d
+WHERE e.department_id(+)=d.department_id
+GROUP BY d.department_id,department_name
+```
+
+>**Aşağıdaki sorguyu ANSI biçiminde yazınız.**
+```SQL
+SELECT * FROM employees e,departments d
+WHERE e.department_id=d.department_id(+)
+```
+```SQL
+SELECT * 
+FROM employees e
+LEFT OUTER JOIN departments d
+ON (e.department_id=d.department_id)
+```
+```SQL
+SELECT * 
+FROM employees e
+LEFT OUTER JOIN departments d
+ON (e.department_id=d.department_id)
+```
+```SQL
+SELECT * 
+FROM employees e
+FULL OUTER JOIN departments d
+ON (e.department_id=d.department_id)
+```
+```SQL
+SELECT * 
+FROM employees e
+RIGHT OUTER JOIN departments d
+ON (e.department_id=d.department_id)
+WHERE salary>5000
+```
+```SQL
+SELECT * 
+FROM employees e,departments d
+WHERE salary>5000
+AND e.department_id(+)=d.department_id
+```
+
+
+>**Kartezyen**
+```SQL
+SELECT * FROM employees,departments
+```
+
+>**Çalışanı olmayan birimleri bulunuz.**
+```SQL
+SELECT department_id FROM departments
+MINUS
+SELECT department_id birim_id FROM employees
+```
+
+```SQL
+SELECT * FROM (SELECT department_id FROM departments
+MINUS
+SELECT department_id birim_id FROM employees)
+WHERE department_id>100
+```
+```SQL
+SELECT * FROM (SELECT department_id birim_id FROM departments
+MINUS
+SELECT department_id FROM employees)
+WHERE department_id>100
+```
+```SQL
+SELECT department_id FROM departments
+MINUS
+SELECT department_id birim_id FROM employees
+ORDER BY department_id
+```
+
+```SQL
+SELECT department_id FROM departments
+UNION ALL
+SELECT department_id birim_id FROM employees
+```
+
+## Bileşke küme operatörleri kullanarak.
+
+>**Yönetici oldukları birimde çalışmayan kişileri bulunuz.**
+```SQL
+    SELECT * FROM employees
+    WHERE employee_id IN 
+    (SELECT manager_id FROM 
+    (SELECT manager_id,department_id FROM departments
+    MINUS
+    SELECT employee_id,department_id FROM employees))
+```    
+    
+>**Maaş ortalaması (binlik) aynı olan birimleri bulunuz.**
+```SQL    
+    SELECT * FROM (SELECT department_id, TRUNC(AVG(salary),-3) ortalama_bin
+    FROM employees
+    GROUP BY department_id) kaynak,
+    (SELECT department_id, TRUNC(AVG(salary),-3) ortalama_bin
+    FROM employees
+    GROUP BY department_id) hedef
+    WHERE kaynak.department_id>hedef.department_id
+     AND kaynak.ortalama_bin=hedef.ortalama_bin
+```
+
+>**Hem AD_PRES, Hem de ST_Clerk çalışan  ancak SA_REP çalışmayan birimleri bulunuz**
+
+```SQL
+(SELECT department_id FROM employees
+WHERE job_id = 'AD_PRES' 
+INTERSECT 
+SELECT department_id FROM employees
+WHERE job_id = 'ST_CLERK') 
+MINUS
+SELECT department_id FROM employees
+WHERE job_id = 'SA_REP'
+```
+
+>**Ülkelerdeki çalışan sayılarını hiç çalışan olayan ülkeleri de dahil ederek getiriniz.**
+
+```SQL
+select c.country_id,c.country_name,count(e.employee_id) 
+from employees e,departments d,locations l,countries c
+WHERE e.department_id(+)=d.department_id
+AND d.location_id(+)=l.location_id
+AND l.country_id(+)=c.country_id
+GROUP BY c.country_id,c.country_name
+```
+
+
+>**Hiç bir çalışanı birimin ortalama maaşını almayan birimleri bulunuz.**
+
+>**Aynı sayıda personelin işe girdiği yılları bulunuz (TO_CHAR(hire_date,'YYYY'))**
+
+>**Çalışanı olan ve olmayan birim sayılarını tek SQL 'de bulunuz.**
+
+>**?**
+
+
 # *To Be Continued..*
