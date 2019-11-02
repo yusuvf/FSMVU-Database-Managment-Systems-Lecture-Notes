@@ -1197,5 +1197,115 @@ GROUP BY c.country_id,c.country_name
 
 >**?**
 
+```SQL
+SELECT * FROM birim
+```
+
+>**Ekleme Tek kayıt**
+```SQL
+INSERT INTO birim
+(department_id,department_name,manager_id)
+VALUES
+(150,'IT',100)
+```
+
+>**Ekleme ?ok kayıt**
+```SQL
+INSERT INTO birim
+(department_id,department_name,manager_id)
+(SELECT department_id+500,department_name,manager_id FROM birim)
+```
+
+>**Ekleme ?ok kayıt - Tablo yapısı aynı**
+```SQL
+INSERT INTO birim
+(SELECT department_id+1000,department_name,manager_id,location_id FROM birim)
+```
+
+>**Değişiklik**
+```SQL
+UPDATE birim
+SET location_id=100,manager_id=101
+WHERE location_id is NULL
+```
+```SQL
+UPDATE birim
+SET department_name='Da??t?m'
+WHERE department_id =50
+```
+```SQL
+UPDATE departments
+SET department_id =500
+WHERE department_id =90
+```
+
+>**Silme**
+```SQL
+DELETE FROM birim
+WHERE department_id>270
+```
+
+>**En yüksek maaş alan kişinin maaşını 20000 dolar yap?n?z.**
+```SQL
+UPDATE calisan
+SET salary=24000
+WHERE salary=(SELECT max(salary) FROM calisan)
+```
+
+>**Ortalamanın üstünde maaş alan kişilerin maaşlarını ortalama mma? olarak değiştiriniz.**
+```SQL
+UPDATE calisan
+SET salary=(SELECT AVG(salary) FROM calisan)
+WHERE salary>(SELECT AVG(salary) FROM calisan)
+```
+```SQL
+UPDATE (SELECT * FROM calisan
+        WHERE department_id=50)
+SET commission_pct=0.1
+```
+
+>**Hiç kimsenin çalışmadığı birimleri siliniz.**
+```SQL
+DELETE FROM birim 
+WHERE department_id IN (SELECT department_id FROM birim
+                        MINUS
+                        SELECT department_id FROM calisan)
+```
+```SQL
+UPDATE  (SELECT * FROM calisan
+         INNER JOIN birim USING (department_id)
+         INNER JOIN locations USING (location_id)
+         WHERE city='Seattle')
+SET salary=5000
+```
+
+>**Hatalı işlem**
+```SQL
+UPDATE  (SELECT * FROM calisan c
+         JOIN birim b ON (c.department_id>b.department_id)
+         INNER JOIN locations l USING (location_id)
+         WHERE city='Seattle')
+SET salary=5000
+```
+
+>**Kişilerin maaşlarını kendi birim ortalama maaşına eşitleyiniz.**
+```SQL
+UPDATE calisan ust
+SET salary=(SELECT AVG(salary) 
+            FROM calisan 
+            WHERE department_id=ust.department_id)
+```
+
+>**Yanlış ??z?m**
+```SQL
+UPDATE calisan ust
+SET salary=(SELECT department_id,AVG(salary) 
+            FROM calisan )
+```
+
+>**Kendi biriminin ortalaması üstünde maaş alan kişileri kendi birim ortalama maaşını indiriniz.**
+
+**??**
+
 
 # *To Be Continued..*
