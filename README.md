@@ -1245,7 +1245,7 @@ DELETE FROM birim
 WHERE department_id>270
 ```
 
->**En yüksek maaş alan kişinin maaşını 20000 dolar yap?n?z.**
+>**En yüksek maaş alan kişinin maaşını 20000 dolar yapınız.**
 ```SQL
 UPDATE calisan
 SET salary=24000
