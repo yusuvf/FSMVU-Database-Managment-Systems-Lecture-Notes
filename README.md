@@ -1038,6 +1038,8 @@ ON (dept_st_man.department_id=dept_st_clerk.department_id
 
 >??
 
+---
+
 >**OUTER JOIN**
 ```SQL
 SELECT * FROM employees e,departments d
@@ -1196,6 +1198,8 @@ GROUP BY c.country_id,c.country_name
 >**Çalışanı olan ve olmayan birim sayılarını tek SQL 'de bulunuz.**
 
 >**?**
+
+---
 
 ```SQL
 SELECT * FROM birim
