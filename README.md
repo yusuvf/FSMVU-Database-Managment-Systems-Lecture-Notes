@@ -1311,5 +1311,137 @@ SET salary=(SELECT department_id,AVG(salary)
 
 **??**
 
+>
+```SQL
+CREATE TABLE MUSTERI
+(MUSTERI_ID NUMBER,
+ ADI VARCHAR2(30),
+ SOYADI VARCHAR2(30))
+ ```
+  ```SQL
+CREATE TABLE calisan1 AS (SELECT * FROM employees)
+  ```
+  ```SQL
+ ALTER TABLE musteri ADD (musteri_temsilcisi DATE);
+  ```
+   ```SQL
+ DROP TABLE  musteri ;
+  ```
+   ```SQL
+ SELECT * FROM musteri
+  ```
+  ```SQL
+CREATE TABLE MUSTERI
+(MUSTERI_ID NUMBER,
+ ADI VARCHAR2(30),
+ SOYADI VARCHAR2(30))
+  ```
+  ```SQL
+SELECT * FROM USER_TABLES
+ ```
+
+>**Bir script ile tüm tablolara giren_kullanıcı VARCHAR2(10) kolonu ekleyiniz.**
+ ```SQL
+ALTER TABLE musteri ADD (dogum_tarihi DATE);
+SELECT 'ALTER TABLE '||table_name||' ADD (giren_kullanici VARCHAR2(10));' FROM USER_TABLES
+ ```
+
+ ```SQL
+SELECT 'ALTER TABLE '||table_name||' DROP COLUMN giren_kullanici;' FROM USER_TABLES
+ ```
+  ```SQL
+select * from user_tab_columns
+where table_name='EMPLOYEES'
+ ```
+ ```SQL
+TRUNCATE TABLE calisan
+ ```
+  ```SQL
+ALTER TABLE musteri
+ADD CONSTRAINT pk_musteri PRIMARY KEY (musteri_id)
+ ```
+ ```SQL
+ALTER TABLE musteri
+ADD CONSTRAINT pk_musteri PRIMARY KEY (musteri_id)
+ ```
+  ```SQL
+SELECT * FROM user_constraints
+ ```
+ ```SQL
+ ALTER TABLE musteri ADD (musteri_temsilcisi NUMBER(6) NOT NULL);
+  ```
+   ```SQL
+ALTER TABLE musteri 
+ADD CONSTRAINT musteri_unique UNIQUE (musteri_temsilcisi)
+ ```
+  ```SQL
+ALTER TABLE musteri 
+ADD CONSTRAINT fk_musteri_emp
+FOREIGN KEY (musteri_temsilcisi)
+REFERENCES employees (employee_id)
+ ```
+
+ ```SQL
+UPDATE musteri
+SET dogum_tarihi=TO_DATE('2/1/1899','DD/MM/YYYY')
+ ```
+  ```SQL
+ALTER TABLE musteri
+ADD CONSTRAINT ck_buyuk_1900
+CHECK (dogum_tarihi > TO_DATE('1/1/1900','DD/MM/YYYY'))
+ ```
+ ```SQL
+CREATE VIEW dept_emp_count AS
+(SELECT d.department_id,department_name,COUNT(e.department_id) personel_adet
+FROM employees e,departments d
+WHERE e.department_id(+)=d.department_id
+GROUP BY d.department_id,department_name)
+ ```
+ ```SQL
+CREATE VIEW personel_view AS (SELECT employee_id,first_name,last_name,department_id FROM employees)
+ ```
+  ```SQL
+SELECT * FROM personel_view
+ ```
+
+>**Yelkilendirme**
+ ```SQL
+CREATE user ogrenci1 identified by ogrenci1;
+ ```
+
+ ```SQL
+GRANT CREATE SESSION TO OGRENCI1;
+
+GRANT CREATE TABLE TO ogrenci1
+
+alter user OGRENCI1 quota unlimited on system;
+ ```
+
+ ```SQL
+SELECT * FROM hr.employees
+
+GRANT all ON hr.employees TO OGRENCI1
+
+REVOKE SELECT ON hr.employees FROM OGRENCI1
+
+CREATE ROLE HR_ROLE 
+ ```
+
+ ```SQL
+GRANT SELECT ON hr.employees TO hr_role;
+GRANT SELECT ON hr.departments TO hr_role;
+GRANT SELECT ON hr.jobs TO hr_role;
+ ```
+
+ ```SQL
+GRANT HR_ROLE TO ogrenci1
+ ```
+
+>**Rolle ilgili yetkilendirme Oracle express 11g sürümünde tekrar bağlanınca aktifleşiyor.**
+
+ ```SQL
+CREATE SYNONYM employees FOR hr.employees
+ ```
+
 
 # *To Be Continued..*
