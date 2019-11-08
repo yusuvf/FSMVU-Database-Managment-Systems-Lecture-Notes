@@ -1443,5 +1443,6 @@ GRANT HR_ROLE TO ogrenci1
 CREATE SYNONYM employees FOR hr.employees
  ```
 
+# *Çözümlü sorular moodle'da *
 
 # *To Be Continued..*
