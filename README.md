@@ -1445,4 +1445,4 @@ CREATE SYNONYM employees FOR hr.employees
 
 # *Çözümlü sorular moodle'da*
 
-# *To Be Continued..*
+# *Notlar artık güncellenmeyecektir!!*
